@@ -2,7 +2,6 @@ import os
 
 
 class DuplicateNodeError(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -11,7 +10,6 @@ class DuplicateNodeError(Exception):
 
 
 class Graph(object):
-
     def __init__(self, structure=None):
 
         if structure is None:
@@ -107,13 +105,18 @@ class Graph(object):
         :param e: A tuple representing an edge of graph 
         :return: True if two nodes are in the same network collision
         """
-        return self.is_connected(e[0], e[1])
+        if self.is_connected(e[0], e[1]):
+            return True
+        else:
+            return UtilsService.any(self.__structure[e[1]], lambda x: x in self.__structure[e[0]])
 
     def __str__(self):
         return str(self.__structure)
 
 
 class UtilsService(object):
+
+    FIXTURE_DIRS = os.path.abspath("fixtures")
 
     @staticmethod
     def load_graph(file_path):
@@ -139,4 +142,9 @@ class UtilsService(object):
         with open(file_path, "a") as f:
             f.write("\n{0} {1}".format(edge[0], edge[1]))
 
-    FIXTURE_DIRS = os.path.abspath("fixtures")
+    @staticmethod
+    def any(iterable, predicate):
+        for iter in iterable:
+            if predicate(iter):
+                return True
+        return False

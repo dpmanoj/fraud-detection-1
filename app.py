@@ -1,11 +1,16 @@
 from flask import Flask
 from flask_restful import Api
 
+from common.utils import UtilsService
+from private import config
 from resources.graph import GraphDetail, GraphList
 from resources.node import NodeDetail, NodeCollision
 
 app = Flask(__name__)
 api = Api(app)
+
+FIXTURE_DIR = config.FIXTURE_DIRS
+
 
 # Registering Routes
 api.add_resource(GraphDetail, '/graph/<int:id>')

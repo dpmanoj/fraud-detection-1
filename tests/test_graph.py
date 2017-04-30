@@ -1,5 +1,5 @@
 import unittest
-from common.utils import Graph, DuplicateNodeError
+from common.utils import Graph, DuplicateNodeError, NodeDoesntExistError
 
 
 class TestGraphMethods(unittest.TestCase):
@@ -40,6 +40,9 @@ class TestGraphMethods(unittest.TestCase):
         self.assertFalse(self.__graph.is_connected('C', 'D'))
         self.assertFalse(self.__graph.is_connected('B', 'D'))
 
+        with self.assertRaises(NodeDoesntExistError):
+            self.__graph.add_edge(edge=('Z', 'F'))
+
     def test_if_two_nodes_was_on_the_same_network(self):
 
         # Adding nodes
@@ -62,8 +65,8 @@ class TestGraphMethods(unittest.TestCase):
 
         # Adding nodes
         self.__graph.add_node(node='C')
-        with self.assertRaises(DuplicateNodeError):
-            self.__graph.add_node(node='C')
+        # with self.assertRaises(DuplicateNodeError):
+        #     self.__graph.add_node(node='C')
 
 
 if __name__ == '__main__':

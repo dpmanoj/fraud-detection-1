@@ -1,7 +1,15 @@
 import os
 
 
-class DuplicateNodeError(Exception):
+class DuplicateEdgeError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class NodeDoesntExistError(Exception):
     def __init__(self, value):
         self.value = value
 
@@ -22,9 +30,6 @@ class Graph(object):
         for n in args:
             if not self.node_exist(n):
                 self.__structure[n] = set()
-
-            else:
-                raise DuplicateNodeError("Node {0} already on graph".format(n))
 
     def add_node(self, **kwargs):
         """
@@ -49,13 +54,28 @@ class Graph(object):
 
         if 'edge' in kwargs:
             e = kwargs.get('edge')
-            self.__structure[e[0]].add(e[1])
-            self.__structure[e[1]].add(e[0])
+
+            if self.node_exist(e[0]) and self.node_exist(e[1]) and not self.edge_exist(e):
+                self.__structure[e[0]].add(e[1])
+                self.__structure[e[1]].add(e[0])
+
+            elif self.edge_exist(e):
+                raise DuplicateEdgeError("Edge already exist")
+
+            else:
+                raise NodeDoesntExistError("Node(s) doesn't exist")
 
         elif 'edges' in kwargs:
             for e in kwargs.get('edges'):
-                self.__structure[e[0]].add(e[1])
-                self.__structure[e[1]].add(e[0])
+                if self.node_exist(e[0]) and self.node_exist(e[1]) and not self.edge_exist(e):
+                    self.__structure[e[0]].add(e[1])
+                    self.__structure[e[1]].add(e[0])
+
+                elif self.edge_exist(e):
+                    raise DuplicateEdgeError("Edge already exist")
+
+                else:
+                    raise NodeDoesntExistError("Node(s) doesn't exist")
 
     def node_exist(self, n):
         """
@@ -148,3 +168,12 @@ class UtilsService(object):
             if predicate(iter):
                 return True
         return False
+
+    @staticmethod
+    def all(iterable, predicate):
+        result = False
+
+        for iter in iterable:
+            result = result and predicate(iter)
+
+        return result

@@ -1,6 +1,10 @@
 import os
+import logging
 
 from fraud_detection.settings import BASE_DIR, TESTING_ENV
+
+logger = logging.getLogger(__name__)
+
 
 if TESTING_ENV:
     FILE_DIRS = os.path.join(BASE_DIR, 'collisions_test.data'),
@@ -45,6 +49,7 @@ class Graph(object):
         :return: None
         """
 
+        logger.info("Adding new node on graph")
         if 'nodes' in kwargs:
             nodes = [n for n in kwargs.get('nodes')]
             apply(self.__node, nodes)
@@ -59,6 +64,7 @@ class Graph(object):
         :return: None
         """
 
+        logger.info("Adding new edge on graph")
         if 'edge' in kwargs:
             e = kwargs.get('edge')
 
@@ -67,9 +73,11 @@ class Graph(object):
                 self.__structure[e[1]].add(e[0])
 
             elif self.edge_exist(e):
+                logger.error("Edge already exist")
                 raise DuplicateEdgeError("Edge already exist")
 
             else:
+                logger.error("Node doesn't exist")
                 raise NodeDoesntExistError("Node(s) doesn't exist")
 
         elif 'edges' in kwargs:
@@ -79,9 +87,11 @@ class Graph(object):
                     self.__structure[e[1]].add(e[0])
 
                 elif self.edge_exist(e):
+                    logger.error("Edge already exist")
                     raise DuplicateEdgeError("Edge already exist")
 
                 else:
+                    logger.error("Node(s) doesn't exist")
                     raise NodeDoesntExistError("Node(s) doesn't exist")
 
     def node_exist(self, n):
@@ -90,6 +100,7 @@ class Graph(object):
         :param n: An Node
         :return: True if node already exist
         """
+        logger.info("Checking if node already exist")
         return self.__structure.get(n) is not None
 
     def edge_exist(self, e):
@@ -98,6 +109,8 @@ class Graph(object):
         :param e: Tuple representing a edge
         :return: True if edge exist or False if edge not exist
         """
+
+        logger.info("Checking if edge exist (if two nodes already connected)")
         return self.is_connected(e[0], e[1])
 
     def get_all_node(self):
@@ -115,6 +128,8 @@ class Graph(object):
         :param n2: node 2
         :return: True if nodes are connected of false if not
         """
+
+        logger.info("Checking if two nodes are connected")
         e1 = self.__structure.get(n1)
         e2 = self.__structure.get(n2)
 
@@ -133,6 +148,7 @@ class Graph(object):
         :return: True if two nodes are in the same network collision
         """
 
+        logger.info("Checking if two nodes are in same network collision")
         if self.node_exist(e[0]) and self.node_exist(e[1]):
             if self.is_connected(e[0], e[1]):
                 return True
@@ -140,6 +156,7 @@ class Graph(object):
                 return UtilsService.any(self.__structure[e[1]], lambda x: x in self.__structure[e[0]])
 
         else:
+            logger.error("Node doesn't exist")
             raise NodeDoesntExistError("Node doesn't exist")
 
     def __str__(self):
@@ -150,6 +167,8 @@ class UtilsService(object):
 
     @staticmethod
     def load_graph():
+        logger.info("Load file")
+
         nodes = list()
         edges = list()
         graph = Graph()
@@ -169,6 +188,7 @@ class UtilsService(object):
 
     @staticmethod
     def store_graph(edge):
+        logger.info("Wrinting new edge on graph")
         with open(FILE_DIRS[0], "a") as f:
             f.write("\n{0} {1}".format(edge[0], edge[1]))
 

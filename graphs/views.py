@@ -19,8 +19,10 @@ class NodeDetail(APIView):
 
         # Setting default responses
         try:
-            status = 201
+            logger.info("Creating new edges")
 
+            # Defining some variables
+            status = 201
             data = json.loads(request.body)
 
             # Get args
@@ -41,6 +43,8 @@ class NodeDetail(APIView):
 
                 UtilsService.store_graph((node_1, node_2))
 
+                logger.info("Edge (%d, %d) created", node_1, node_2)
+
                 d = dict(message="Resource created with successful",
                          edge=(node_1, node_2),
                          status=201)
@@ -50,7 +54,9 @@ class NodeDetail(APIView):
                          status=status)
 
         except DuplicateEdgeError:
+            logger.error("Edge (%d, %d) already exist", node_1, node_2)
             status = 409
+
             d = dict(message="Resource already exist",
                      status=409)
 
@@ -75,6 +81,7 @@ class NodeCollision(APIView):
         """
 
         try:
+            logger.info("Checking if two nodes are in the same network")
             data = json.loads(request.body)
 
             # Get args
@@ -93,6 +100,8 @@ class NodeCollision(APIView):
                 status = 201
 
             else:
+                logger.error("Bad formation on request")
+
                 status = 400
                 d = dict(message="Bad Request",
                          status=status)
@@ -100,6 +109,7 @@ class NodeCollision(APIView):
         except NodeDoesntExistError:
             status = 403
 
+            logger.error("Resources doesn't exist")
             d = dict(message="Resource not found",
                      status=403)
 

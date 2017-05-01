@@ -55,8 +55,8 @@ Or
 
        [POST] http://localhost:8000/api/v1/graph/node/collision/
 	   {
-			"node1": 1,
-			"node2": 10,
+			"node1": 8,
+			"node2": 2,
 	   }
 	   
 In this operation two things are being make, creating new node with 

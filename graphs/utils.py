@@ -29,6 +29,7 @@ class NodeDoesntExistError(Exception):
 
 
 class Graph(object):
+
     def __init__(self, structure=None):
 
         if structure is None:
@@ -57,6 +58,24 @@ class Graph(object):
         elif 'node' in kwargs:
             self.__node(kwargs.get('node'))
 
+    def __edge(self, e):
+        """
+        
+        :param e: An edge compound by two nodes
+        :return: 
+        """
+        if self.node_exist(e[0]) and self.node_exist(e[1]) and not self.edge_exist(e) and e[0] != e[1]:
+            self.__structure[e[0]].add(e[1])
+            self.__structure[e[1]].add(e[0])
+
+        elif self.edge_exist(e):
+            logger.error("Edge already exist")
+            raise DuplicateEdgeError("Edge already exist")
+
+        else:
+            logger.error("Node doesn't exist")
+            raise NodeDoesntExistError("Node(s) doesn't exist")
+
     def add_edge(self, **kwargs):
         """
         Connecting two nodes
@@ -67,32 +86,11 @@ class Graph(object):
         logger.info("Adding new edge on graph")
         if 'edge' in kwargs:
             e = kwargs.get('edge')
-
-            if self.node_exist(e[0]) and self.node_exist(e[1]) and not self.edge_exist(e):
-                self.__structure[e[0]].add(e[1])
-                self.__structure[e[1]].add(e[0])
-
-            elif self.edge_exist(e):
-                logger.error("Edge already exist")
-                raise DuplicateEdgeError("Edge already exist")
-
-            else:
-                logger.error("Node doesn't exist")
-                raise NodeDoesntExistError("Node(s) doesn't exist")
+            self.__edge(e)
 
         elif 'edges' in kwargs:
             for e in kwargs.get('edges'):
-                if self.node_exist(e[0]) and self.node_exist(e[1]) and not self.edge_exist(e):
-                    self.__structure[e[0]].add(e[1])
-                    self.__structure[e[1]].add(e[0])
-
-                elif self.edge_exist(e):
-                    logger.error("Edge already exist")
-                    raise DuplicateEdgeError("Edge already exist")
-
-                else:
-                    logger.error("Node(s) doesn't exist")
-                    raise NodeDoesntExistError("Node(s) doesn't exist")
+                self.__edge(e)
 
     def node_exist(self, n):
         """

@@ -76,6 +76,13 @@ class NodeDetail(APIView):
             d = dict(message="Resource already exist",
                      status=409)
 
+        except ValueError:
+            logger.error("Bad formation on request")
+
+            status = 400
+            d = dict(message="Bad Request",
+                     status=status)
+
         return JsonResponse(data=d,
                             status=status)
 
@@ -104,7 +111,8 @@ class NodeCollision(APIView):
             node_1 = data.get('node1')
             node_2 = data.get('node2')
 
-            if node_1 is not None and node_2 is not None:
+            if node_1 is not None and node_2 is not None and node_1 != node_2:
+
                 node_1 = int(node_1) if isinstance(node_1, str) and node_1.isdigit() else node_1
                 node_2 = int(node_2) if isinstance(node_2, str) and node_2.isdigit() else node_2
 
@@ -123,11 +131,18 @@ class NodeCollision(APIView):
                          status=status)
 
         except NodeDoesntExistError:
-            status = 400
+            status = 403
 
             logger.error("Resources doesn't exist")
             d = dict(message="Node not found",
-                     status=400)
+                     status=403)
+
+        except ValueError:
+            logger.error("Bad formation on request")
+
+            status = 400
+            d = dict(message="Bad Request",
+                     status=status)
 
         return JsonResponse(data=d,
                             status=status)

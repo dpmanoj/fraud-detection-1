@@ -25,18 +25,18 @@ A simple API to detect credit card fraud based in network collisions
 		$ (env) pip install -r requirements.txt
     
        
-5. Running migrations
+4. Running migrations
 
 		$ (env) python manage.py makemigrations
 		$ (env) python manage.py migrate
        
-6. Running the application
+5. Running the application
 
 		$ (env) python manage.py runserver
 
 By default django startup application in port 8000
 
-7. Check if two nodes are in the same network collision:
+6. Check if two nodes are in the same network collision:
 
         
 		[POST] http://localhost:8000/api/v1/graph/collision/
@@ -47,9 +47,9 @@ By default django startup application in port 8000
 
 If everthing is correct your should see the response like this:
 
-		{
+	    {
 			"is_same_network": true
-		}
+	    }
        
 Or
 
@@ -59,9 +59,16 @@ Or
 			"node2": 10,
 	   }
 	   
-In this operation two things are being make, creating new node with id=10 and after 
-connect node 1 on node 2 creating the edge (1, 10) what mean that node 1 and node 10
-are in the same network collision.
+In this operation two things are being make, creating new node with 
+id=10 and after connecting node 1 on node 2 creating the edge (1, 10)
+what mean that node 1 and node 10 are in the same network collision. 
+If everything is ok, the response will be like bellow
+
+      {
+          "status": 201,
+          "message": "Resource created with successful",
+          "edge": [8,2]
+      }
 
 
 ## Tests

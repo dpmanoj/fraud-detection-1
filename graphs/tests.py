@@ -1,8 +1,11 @@
-import unittest
-from common.utils import Graph, DuplicateNodeError, NodeDoesntExistError
+import json
+
+from django.test import TestCase, Client
+
+from utils import Graph
 
 
-class TestGraphMethods(unittest.TestCase):
+class TestGraphMethods(TestCase):
 
     def setUp(self):
         self.__graph = Graph()
@@ -40,7 +43,7 @@ class TestGraphMethods(unittest.TestCase):
         self.assertFalse(self.__graph.is_connected('C', 'D'))
         self.assertFalse(self.__graph.is_connected('B', 'D'))
 
-        with self.assertRaises(NodeDoesntExistError):
+        with self.assertRaises(TypeError):
             self.__graph.add_edge(edge=('Z', 'F'))
 
     def test_if_two_nodes_was_on_the_same_network(self):
@@ -61,13 +64,39 @@ class TestGraphMethods(unittest.TestCase):
         self.assertTrue(self.__graph.same_network(('A', 'D')))
         self.assertTrue(self.__graph.same_network(('D', 'A')))
 
-    def test_if_node_already_was_on_graph(self):
 
-        # Adding nodes
-        self.__graph.add_node(node='C')
-        # with self.assertRaises(DuplicateNodeError):
-        #     self.__graph.add_node(node='C')
+class TestGraphEndPoints(TestCase):
 
+    def setUp(self):
+        self.__client = Client()
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_detect_collision(self):
+        data = dict(node1=1, node2=2)
+        response = self.__client.post(path='/api/v1/graph/collision/',
+                                      data=json.dumps(data),
+                                      content_type='application/json')
+
+        self.assertEqual(response.status_code, 201)
+        obj = json.loads(response.content)
+        self.assertTrue(obj.get('is_same_network'))
+
+    def test_create_collision(self):
+        data = dict(node1=1, node2=15)
+        response = self.__client.post(path='/api/v1/graph/node/collision/',
+                                      data=json.dumps(data),
+                                      content_type='application/json')
+
+        self.assertEqual(response.status_code, 201)
+        obj = json.loads(response.content)
+        self.assertEqual(obj.get('message'), "Resource created with successful")
+        self.assertEqual(obj.get('edge'), [1, 15])
+
+    def test_if_resource_already_exist(self):
+        data = dict(node1=1, node2=2)
+        response = self.__client.post(path='/api/v1/graph/node/collision/',
+                                      data=json.dumps(data),
+                                      content_type='application/json')
+
+        self.assertEqual(response.status_code, 409)
+        obj = json.loads(response.content)
+        self.assertEqual(obj.get('message'), "Resource already exist")

@@ -1,5 +1,12 @@
 import os
 
+from fraud_detection.settings import BASE_DIR, TESTING_ENV
+
+if TESTING_ENV:
+    FILE_DIRS = os.path.join(BASE_DIR, 'collisions_test.data'),
+else:
+    FILE_DIRS = os.path.join(BASE_DIR, 'collisions.data'),
+
 
 class DuplicateEdgeError(Exception):
     def __init__(self, value):
@@ -121,14 +128,19 @@ class Graph(object):
         """
         For answer if two nodes are in the same network collision, 
         not need know all network, only know if the nodes are connected
-        
+
         :param e: A tuple representing an edge of graph 
         :return: True if two nodes are in the same network collision
         """
-        if self.is_connected(e[0], e[1]):
-            return True
+
+        if self.node_exist(e[0]) and self.node_exist(e[1]):
+            if self.is_connected(e[0], e[1]):
+                return True
+            else:
+                return UtilsService.any(self.__structure[e[1]], lambda x: x in self.__structure[e[0]])
+
         else:
-            return UtilsService.any(self.__structure[e[1]], lambda x: x in self.__structure[e[0]])
+            raise NodeDoesntExistError("Node doesn't exist")
 
     def __str__(self):
         return str(self.__structure)
@@ -136,15 +148,13 @@ class Graph(object):
 
 class UtilsService(object):
 
-    FIXTURE_DIRS = os.path.abspath("fixtures")
-
     @staticmethod
-    def load_graph(file_path):
+    def load_graph():
         nodes = list()
         edges = list()
         graph = Graph()
 
-        with open(file_path, "r") as f:
+        with open(FILE_DIRS[0], "r") as f:
             lines = f.readlines()
 
             for line in lines:
@@ -158,8 +168,8 @@ class UtilsService(object):
         return graph
 
     @staticmethod
-    def store_graph(file_path, edge):
-        with open(file_path, "a") as f:
+    def store_graph(edge):
+        with open(FILE_DIRS[0], "a") as f:
             f.write("\n{0} {1}".format(edge[0], edge[1]))
 
     @staticmethod

@@ -93,3 +93,5 @@ ENV/
 main.py
 
 *.sqlite3
+
+collisions_test.data

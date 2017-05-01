@@ -23,6 +23,23 @@ ALLOWED_HOSTS = []
 TESTING_ENV = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 
+if TESTING_ENV:
+    # Writing files for tests
+
+    FILE_DIRS = os.path.join(BASE_DIR, 'collisions_test.data')
+
+    with open(FILE_DIRS, "w+") as f:
+        f.writelines('1 2\n')
+        f.writelines('1 3\n')
+        f.writelines('2 3\n')
+        f.writelines('1 4\n')
+        f.writelines('5 6\n')
+        f.writelines('6 7')
+
+else:
+    FILE_DIRS = os.path.join(BASE_DIR, 'collisions.data')
+
+
 if DEBUG:
     # will output to your console
     logging.basicConfig(

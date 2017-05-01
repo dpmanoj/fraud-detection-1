@@ -1,15 +1,9 @@
-import os
+
 import logging
 
-from fraud_detection.settings import BASE_DIR, TESTING_ENV
+from fraud_detection.settings import FILE_DIRS
 
 logger = logging.getLogger(__name__)
-
-
-if TESTING_ENV:
-    FILE_DIRS = os.path.join(BASE_DIR, 'collisions_test.data'),
-else:
-    FILE_DIRS = os.path.join(BASE_DIR, 'collisions.data'),
 
 
 class DuplicateEdgeError(Exception):
@@ -171,7 +165,7 @@ class UtilsService(object):
         edges = list()
         graph = Graph()
 
-        with open(FILE_DIRS[0], "r") as f:
+        with open(FILE_DIRS, "r") as f:
             lines = f.readlines()
 
             for line in lines:
@@ -187,7 +181,7 @@ class UtilsService(object):
     @staticmethod
     def store_graph(edge):
         logger.info("Wrinting new edge on graph")
-        with open(FILE_DIRS[0], "a") as f:
+        with open(FILE_DIRS, "a+") as f:
             f.write("\n{0} {1}".format(edge[0], edge[1]))
 
     @staticmethod

@@ -1,12 +1,28 @@
 import json
 import logging
+import os
 
 from django.http import JsonResponse
 from rest_framework.views import APIView
-
+from django.shortcuts import render
+from django.http import HttpResponse
 from .utils import UtilsService, DuplicateEdgeError, NodeDoesntExistError
+from fraud_detection.settings import PROJECT_ROOT
 
 logger = logging.getLogger(__name__)
+
+
+def index(request):
+    return render(request, 'graphs/index.html')
+
+
+def api_docs(request):
+    data = None
+
+    with open(os.path.join(PROJECT_ROOT, '../swagger.json')) as data_file:
+        data = json.load(data_file)
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 
 class NodeDetail(APIView):
@@ -107,11 +123,11 @@ class NodeCollision(APIView):
                          status=status)
 
         except NodeDoesntExistError:
-            status = 403
+            status = 400
 
             logger.error("Resources doesn't exist")
-            d = dict(message="Resource not found",
-                     status=403)
+            d = dict(message="Node not found",
+                     status=400)
 
         return JsonResponse(data=d,
                             status=status)

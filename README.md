@@ -45,7 +45,7 @@ By default django startup application in port 8000
 			"node2": 2,
 		}
 
-If everthing is correct your should see the response like this:
+If everything is correct your should see the response like this:
 
 	    {
 			"is_same_network": true
@@ -70,7 +70,12 @@ If everything is ok, the response will be like bellow
           "edge": [8,2]
       }
 
+## Live Demo
 
+The documentation can be accessing here:
+
+     http://localhost:8000/api/v1/docs/ 
+     
 ## Tests
 
 For running tests running:

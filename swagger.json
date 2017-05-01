@@ -1,0 +1,125 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "Fraud detection API",
+    "description": "Simple API to detect collision between two nodes and allow insert new collision on network"
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+
+    "/api/v1/graph/collision/": {
+      "post": {
+        "description": "Check if two nodes are in the same network collision",
+        "operationId": "Check if two nodes are in the same network collision",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckIfTwoNodeAreInTheSameNetworkCollisionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    },
+    "/api/v1/graph/node/collision/": {
+      "post": {
+        "description": "Creating a new collision on graph",
+        "operationId": "Creating a new collision on graph",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateNewCollisionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "x-unitTests": [],
+        "x-operation-settings": {
+          "CollectParameters": false,
+          "AllowDynamicQueryParameters": false,
+          "AllowDynamicFormParameters": false,
+          "IsMultiContentStreaming": false
+        }
+      }
+    }
+
+  },
+  "definitions": {
+    "CheckIfTwoNodeAreInTheSameNetworkCollisionRequest": {
+      "title": "Calcule distance between two words request",
+      "type": "object",
+      "properties": {
+        "node1": {
+          "type": "integer"
+        },
+        "node2": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "node1",
+        "node2"
+      ]
+    },
+    "CreateNewCollisionRequest": {
+      "title": "Creating new collision",
+      "type": "object",
+      "properties": {
+        "node1": {
+          "type": "integer"
+        },
+        "node2": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "node1",
+        "node2"
+      ]
+    }
+  }
+}
